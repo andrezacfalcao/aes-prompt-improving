@@ -1,0 +1,66 @@
+{
+  "bert-base-uncased_bert_base_uncased_p2": {
+    "prompt_2": {
+      "experiment_name": "bert-base-uncased_bert_base_uncased_p2",
+      "target_prompt": 2,
+      "source_prompts": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "best_val_qwk": 0.706857021296712,
+      "test_metrics": {
+        "qwk": 0.46470758281083346,
+        "pearson": 0.7092108726501465,
+        "spearman": 0.661910219846284,
+        "rmse": 0.8327895456553867,
+        "mae": 0.6913197636604309,
+        "loss": 0.027719992897019978
+      },
+      "total_epochs": 1,
+      "split_sizes": {
+        "train": 10058,
+        "val": 1118,
+        "test": 1800
+      },
+      "actual_sizes": {
+        "train": 10058,
+        "val": 1118,
+        "test": 1800
+      },
+      "subset": {
+        "train_subset": null,
+        "val_subset": null,
+        "test_subset": null
+      }
+    }
+  },
+  "bert_p2": {
+    "prompt_2": {
+      "target_prompt": 2,
+      "source_prompts": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "best_val_qwk": 0.7507829501235463,
+      "test_metrics": {
+        "qwk": 0.5805139162173123,
+        "pearson": 0.6878917813301086,
+        "spearman": 0.6511139895024297,
+        "rmse": 0.6745311663011009,
+        "mae": 0.5365852117538452,
+        "loss": 0.018232914866401558
+      },
+      "total_epochs": 5
+    }
+  }
+}

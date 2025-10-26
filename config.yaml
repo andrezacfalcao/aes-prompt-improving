@@ -1,0 +1,222 @@
+# ============================================
+# Baseline & Future Techniques Configuration
+# ============================================
+# Consolidated configuration covering:
+# - Baseline transformer experiments (BERT, RoBERTa, DistilBERT, ELECTRA)
+# - Planned PANN (Prompt-Aware Neural Network)
+# - Planned DRL (Deep Reinforcement Learning) extensions
+# ============================================
+
+# Model Architecture Configuration
+model:
+  baseline:
+    name: "transformer_aes"
+    backbones:
+      - "bert-base-uncased"
+      - "roberta-base"
+      - "distilbert-base-uncased"
+      - "google/electra-base-discriminator"
+    dropout: 0.1
+    hidden_size: null
+    freeze_encoder: false
+
+  pann:
+    enabled: false
+    name: "PANN"
+    bert_model: "bert-base-uncased"
+    bert_hidden_size: 768
+    freeze_bert: false
+    num_kernels: 8
+    kernel_width: 0.1
+    embedding_dim: 300
+    fc_layers: 2
+    fc_hidden_size: 256
+    dropout: 0.1
+    activation: "relu"
+
+  drl:
+    enabled: false
+    agent: "ppo"
+    hidden_size: 256
+    gamma: 0.99
+    learning_rate: 3e-5
+    rollout_steps: 128
+
+training:
+  batch_size: 8
+  num_epochs: 10
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  gradient_accumulation_steps: 4
+  optimizer: "adamw"
+  scheduler: "linear"
+  max_length: 512
+  num_workers: 0
+  pin_memory: false
+  fp16: false
+  early_stopping:
+    enabled: true
+    patience: 3
+    min_delta: 0.001
+
+# CNAA Pre-training Configuration
+cnaa:
+  # Data augmentation thresholds
+  delta_h: 0.8  # High score threshold (for ASAP)
+  delta_l: 0.3  # Low score threshold (for ASAP)
+
+  # For TOEFL11, these are ignored (uses natural l/m/h division)
+  use_natural_division: false  # Set true for TOEFL11
+
+  # Margins for contrastive learning
+  margin_m1: 0.1  # NIA margin (quality)
+  margin_m2: 0.1  # ASA margin (content/prompt)
+
+  # Score reduction for augmented data
+  score_reduction_mu: 0.4
+  score_reduction_sigma: 1.0
+
+  # Augmentation ratios
+  augmentation_ratio: 1.0  # Ratio of derived data to original data
+
+  # Loss weights
+  nia_weight: 1.0
+  asa_weight: 1.0
+
+  # Pre-training epochs
+  pretrain_epochs: 5
+  pretrain_learning_rate: 5e-5
+
+# CST Fine-tuning Configuration
+cst:
+  # Pre-score weight in merging
+  alpha: 0.8
+
+  # Counterfactual data generation
+  prompt_replace_ratio_random: 0.5  # For creating p̃
+
+  # Multiple counterfactual variants
+  replace_ratios: [0.2, 0.3, 0.5]
+  score_multipliers: [1.1, 1.0, 0.9]
+
+  # Warmup configuration
+  warmup_epochs: 2
+  warmup_learning_rate: 5e-5
+
+  # Fine-tuning epochs
+  finetune_epochs: 3
+  finetune_learning_rate: 3e-5
+
+  # Counterfactual data ratio
+  cf_data_ratio: 1.0  # Ratio to original data
+
+# Dataset Configuration
+data:
+  dataset: "asap"
+  raw_path: "data/raw/training_set_rel3.tsv"
+  processed_dir: "data/processed"
+  processed_format: "parquet"
+  val_size: 0.1
+  random_seed: 42
+  use_cache: true
+  cache_dir: "data/cache/"
+
+# Evaluation Configuration
+evaluation:
+  # Metrics
+  primary_metric: "qwk"  # Quadratic Weighted Kappa
+  additional_metrics: ["pearson", "spearman", "mse", "mae"]
+
+  # Evaluation strategy
+  eval_during_training: true
+  eval_on_validation: true
+  eval_batch_size: 64
+
+  # Multiple runs
+  num_runs: 5
+  seeds: [42, 123, 456, 789, 1024]
+
+  # Score rescaling
+  rescale_scores: true  # Rescale predictions to original range
+
+# Experiment Configuration
+experiment:
+  name: "baseline_leave_one_out"
+  output_dir: "checkpoints"
+  log_dir: "logs"
+  summary_dir: "analysis"
+  prompts: [1, 2, 3, 4, 5, 6, 7, 8]
+  models: ["bert-base-uncased", "roberta-base", "distilbert-base-uncased", "google/electra-base-discriminator"]
+  skip_completed: true
+  use_processed_splits: true
+  processed_format: "parquet"
+
+# Visualization Configuration
+visualization:
+  # t-SNE plots
+  generate_tsne: true
+  tsne_perplexity: 30
+  tsne_n_iter: 1000
+
+  # Feature distribution plots
+  plot_features: true
+  plot_frequency: 1  # Every N epochs
+
+  # Save plots
+  save_plots: true
+  plot_format: "png"  # png, pdf, svg
+  plot_dpi: 300
+
+# Logging Configuration
+logging:
+  # Log level
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+
+  # Log to file
+  log_to_file: true
+  log_file: "logs/training.log"
+
+  # Log to console
+  log_to_console: true
+
+  # Tensorboard
+  use_tensorboard: true
+  tensorboard_dir: "runs/"
+
+  # Wandb (optional)
+  use_wandb: false
+  wandb_project: "prompt-aware-aes"
+  wandb_entity: null
+
+# Hardware Configuration
+hardware:
+  # GPU settings
+  cuda_device: 0
+  use_amp: false  # Automatic Mixed Precision
+
+  # Multi-GPU (not used in paper)
+  use_ddp: false
+  world_size: 1
+
+  # Memory optimization
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: false
+
+# Reproducibility
+reproducibility:
+  seed: 42
+  deterministic: true
+  benchmark: false
+
+# Advanced Options
+advanced:
+  debug: false
+  debug_samples: 200
+  profile: false
+  profile_steps: 100
+  local_rank: -1
+  notes:
+    - "PANN/DRL sections disabled by default; flip 'enabled' flags when ready."
+    - "Baseline experiments controlled via scripts/train.py and run_all_prompts.py."
