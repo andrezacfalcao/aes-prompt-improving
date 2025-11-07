@@ -147,12 +147,13 @@ class BertAES(TransformerAES):
 
     def __init__(
         self,
+        model_name: str = "bert-base-uncased",
         dropout: float = 0.1,
         hidden_size: Optional[int] = None,
         freeze_encoder: bool = False
     ):
         super().__init__(
-            model_name="bert-base-uncased",
+            model_name=model_name,
             num_labels=1,
             dropout=dropout,
             hidden_size=hidden_size,

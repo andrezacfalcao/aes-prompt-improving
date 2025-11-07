@@ -194,3 +194,44 @@ def print_metrics(metrics: Dict[str, float], title: Optional[str] = None):
             print(f"{metric_name:<20} {value:>10.3f}")
 
     print(f"{'='*60}\n")
+
+
+def compute_qwk(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    min_score: Optional[int] = None,
+    max_score: Optional[int] = None
+) -> float:
+    """
+    Wrapper function for quadratic_weighted_kappa for backward compatibility
+
+    Args:
+        y_true: Ground truth scores
+        y_pred: Predicted scores
+        min_score: Minimum score (unused, for API compatibility)
+        max_score: Maximum score (unused, for API compatibility)
+
+    Returns:
+        QWK score
+    """
+    return quadratic_weighted_kappa(y_true, y_pred, round_predictions=False)
+
+
+def compute_correlations(
+    y_true: np.ndarray,
+    y_pred: np.ndarray
+) -> Dict[str, float]:
+    """
+    Compute both Pearson and Spearman correlations
+
+    Args:
+        y_true: Ground truth scores
+        y_pred: Predicted scores
+
+    Returns:
+        Dictionary with 'pearson' and 'spearman' keys
+    """
+    return {
+        'pearson': pearson_correlation(y_true, y_pred),
+        'spearman': spearman_correlation(y_true, y_pred)
+    }

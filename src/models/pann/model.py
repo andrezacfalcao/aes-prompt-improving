@@ -412,3 +412,6 @@ class PromptAwareAES(nn.Module):
                 prompt_input_ids, prompt_attention_mask
             )
             return outputs['predictions']
+
+
+PANN = PromptAwareAES
