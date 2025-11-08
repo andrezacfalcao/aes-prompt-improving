@@ -33,10 +33,6 @@ ENV/
 *.swo
 *~
 
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
-
 # Data
 data/raw/*
 data/processed/*
